@@ -10,12 +10,13 @@ HISTFILE=~/.zsh_histfile
 HISTSIZE=5000
 SAVEHIST=10000
 setopt INC_APPEND_HISTORY
-# setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_IGNORE_ALL_DUPS
 setopt HIST_SAVE_NO_DUPS
+setopt AUTO_LIST
+unsetopt PROMPT_SP
 
 # Keybindings
 bindkey -e
-
 
 # The following lines were added by compinstall
 zstyle :compinstall filename '/home/anchit/.zshrc'
@@ -30,13 +31,29 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-plugins=(zsh-autosuggestions)
+
+# Plugins
+plugins=(
+  zsh-autosuggestions
+  zsh-syntax-highlighting
+)
+
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
+
+source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # Aliases
 alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 alias search_history="cat ~/.zsh_histfile | grep"
-alias synchronize_time="timedatectl set-ntp true"
+alias synchronize_time="sudo ntpd -gq"
 alias darwin="conda activate darwin"
+alias testcolor="for i in {0..255}; do print -Pn "%K{$i}  %k%F{$i}${(l:3::0:)i}%f " ${${(M)$((i%6)):#3}:+$'\n'}; done"
+alias chnvidia="watch cat /proc/driver/nvidia/gpus/0000:01:00.0/power"
+
+
+# App specific configs
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
@@ -54,4 +71,11 @@ conda deactivate
 unset __conda_setup
 # <<< conda initialize <<<
 
+# NNN
+export NNN_PLUG='f:finder;o:fzopen;p:mocplay;d:diffs;t:nmount;v:imgview'
+# export NNN_FCOLORS=''
+set --export NNN_FIFO "/tmp/nnn.fifo"
+
+typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet
+fortune -s | cowsay
 
